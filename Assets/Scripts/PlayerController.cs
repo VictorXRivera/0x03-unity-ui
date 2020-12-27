@@ -1,13 +1,42 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody rb;
     public float speed = 500f;
+    private int score = 0;
+    private int health = 5;
 
-    void Start()
+    void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Movement");
+        if (other.gameObject.tag == "Pickup")
+        {
+            Destroy(other.gameObject);
+            score += 1;
+            Debug.Log($"Score: {score}");
+        }
+
+        if (other.gameObject.tag == "Trap")
+        {
+            health -=1;
+            Debug.Log($"Health: {health}");
+        }
+
+        if (other.gameObject.tag == "Goal")
+        {
+            Debug.Log("You Win!");
+            SceneManager.LoadScene("maze");
+        }
+    }
+
+    void Update()
+    {
+        if (health == 0)
+        {
+            Debug.Log("Game Over!");
+            SceneManager.LoadScene("maze");
+        }
     }
 
     void FixedUpdate()
