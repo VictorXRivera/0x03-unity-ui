@@ -1,41 +1,67 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
+using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody rb;
     public float speed = 500f;
     private int score = 0;
     private int health = 5;
+    public Text scoreText;
+    public Text healthText;
+    public Text winLoseText;
+    public Image winLoseBG;
 
+    void SetScoreText()
+    {
+        scoreText.text = "Score: " + score.ToString();
+    }
+
+    void SetHealthText()
+    {
+        healthText.text = "Health: " + health.ToString();
+    }
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Pickup")
         {
             Destroy(other.gameObject);
             score += 1;
-            Debug.Log($"Score: {score}");
+            SetScoreText();
         }
 
         if (other.gameObject.tag == "Trap")
         {
             health -=1;
-            Debug.Log($"Health: {health}");
+            SetHealthText();
         }
 
         if (other.gameObject.tag == "Goal")
         {
-            Debug.Log("You Win!");
-            SceneManager.LoadScene("maze");
+            winLoseBG.gameObject.SetActive(true);
+            winLoseText.color = Color.black;
+            winLoseBG.color = Color.green;
+            winLoseText.text = "You win!";
+            StartCoroutine(LoadScene(3));
         }
+    }
+
+    IEnumerator LoadScene(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        SceneManager.LoadScene(0);
     }
 
     void Update()
     {
         if (health == 0)
         {
-            Debug.Log("Game Over!");
-            SceneManager.LoadScene("maze");
+            winLoseBG.gameObject.SetActive(true);
+            winLoseText.color = Color.white;
+            winLoseBG.color = Color.red;
+            winLoseText.text = "Game Over!";
+            StartCoroutine(LoadScene(3));
         }
     }
 
